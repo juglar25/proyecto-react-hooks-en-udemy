@@ -1,43 +1,47 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, {useState} from 'react';
+import {Container, Typography, Card, Grid, TextField, Button} from '@material-ui/core'
+import styles from './style'
+import MovieIcon from "../../icons/MovieIcon";
 
-import { getDemoRequest } from '../../redux/actions/demoActions';
+export default ({history}) => {
+    const [searchText, setSearchText] = useState('')
+    const classes = styles()
+    const handleSearchTextChange = event => {
+        setSearchText(event.target.value)
+    }
 
-import User from '../../components/User';
+    const handleSearchTextClick = event => {
+        history.push(`/results?movieName="${searchText}"`)
+    }
+    const handleCleanTextClick = event => {
+        setSearchText('')
+    }
 
-class Home extends Component {
-	componentWillMount() {
-		this.props.getDemoRequest('hey');
-	}
-	render() {
-		const { users } = this.props;
+    return(
+        <Container  className={classes.container}>
+            <Card className={classes.cardContainer}>
+                <Grid container className={classes.tittleGridContainer}>
+                <Grid>
+                    <Typography className={classes.title}>Bienvenido!</Typography>
+                </Grid>
+                    <Grid>
+                        <MovieIcon className={classes.movieIcon} />
+                    </Grid>
+                </Grid>
+                <TextField
+                value={searchText}
+                placeholder="Buscar..."
+                onChange={handleSearchTextChange}
+                className={classes.textFieldSearch}/>
+                <Grid className={classes.buttonsContainer}>
+                    <Button variant="contained" onClick={handleCleanTextClick}>Limpiar</Button>
+                    <Button variant="contained" color="primary" size="large" className={classes.searchButton} onClick={handleSearchTextClick}>Buscar</Button>
+                </Grid>
 
-		let items = [];
-		if (typeof users !== 'undefined') {
-			items = users.map((value, index) => {
-				return <User key={index} {...value} />;
-			});
-		}
-		return <div>{items}</div>;
-	}
+
+            </Card>
+        </Container>
+    )
+
+
 }
-
-const mapDispatchToProps = (dispatch, props) => {
-	return {
-		getDemoRequest: payload => {
-			dispatch(getDemoRequest(payload));
-		}
-	};
-};
-const mapStateToProps = state => {
-	return {
-		users: state.demoReducer[0]
-	};
-};
-
-Home.propTypes = {
-	dispatch: PropTypes.func
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
